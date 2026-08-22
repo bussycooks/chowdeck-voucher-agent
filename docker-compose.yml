@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  chowdeck-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chowdeck-voucher-agent
+    environment:
+      X_BEARER_TOKEN: ${X_BEARER_TOKEN}
+      X_USERNAME: ${X_USERNAME:-lordbinary_}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+      MONITOR_TIMEZONE: ${MONITOR_TIMEZONE:-Africa/Lagos}
+      MONITOR_START: ${MONITOR_START:-18:00}
+      MONITOR_END: ${MONITOR_END:-23:00}
+      MONITOR_INTERVAL_SECONDS: ${MONITOR_INTERVAL_SECONDS:-60}
+      APP_MODE: ${APP_MODE:-production}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DATABASE_PATH: ${DATABASE_PATH:-chowdeck_monitor.db}
+      CHOWDECK_BROWSER_HEADLESS: ${CHOWDECK_BROWSER_HEADLESS:-false}
+      CHOWDECK_PROFILE_PATH: ${CHOWDECK_PROFILE_PATH:-./browser_profiles/chowdeck}
+    volumes:
+      - ./browser_profiles:/app/browser_profiles
+      - ./logs:/app/logs
+      - ./chowdeck_monitor.db:/app/chowdeck_monitor.db
+    restart: unless-stopped
+    networks:
+      - monitor-network
+
+networks:
+  monitor-network:
+    driver: bridge
